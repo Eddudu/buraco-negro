@@ -1,4 +1,3 @@
-/* ===== RESET E ESTILO GERAL ===== */
 * {
   margin: 0;
   padding: 0;
@@ -44,7 +43,6 @@ h1 {
   margin-bottom: 30px;
 }
 
-/* ===== CANVAS E CONTROLES ===== */
 .canvas-container {
   display: flex;
   flex-direction: column;
@@ -105,8 +103,7 @@ button:hover {
   box-shadow: 0 0 15px #ff9900;
 }
 
-#massa-valor,
-#spin-valor {
+#massa-valor, #spin-valor {
   font-size: 1.1rem;
   color: #ffcc00;
   min-width: 70px;
@@ -119,7 +116,44 @@ button:hover {
   margin-top: 5px;
 }
 
-/* ===== RESULTADOS ===== */
+.panel-astros {
+  background: rgba(30, 30, 60, 0.8);
+  border: 1px solid #3366ff;
+  border-radius: 10px;
+  padding: 15px;
+  margin: 15px 0;
+}
+
+.panel-astros h3 {
+  color: #ffcc00;
+  margin-bottom: 10px;
+}
+
+.botoes-astros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.astro-btn {
+  background: linear-gradient(45deg, #1a1a40, #3366ff);
+  color: white;
+  font-size: 0.9rem;
+  padding: 8px 14px;
+  border: 1px solid #6699ff;
+}
+
+.astro-btn:hover {
+  box-shadow: 0 0 10px #6699ff;
+  transform: scale(1.05);
+}
+
+#btn-limpar-astros {
+  background: linear-gradient(45deg, #cc0000, #ff3300);
+  color: white;
+}
+
 #resultado {
   background: #0a0a20;
   padding: 15px;
@@ -130,7 +164,6 @@ button:hover {
   font-family: 'Courier New', monospace;
 }
 
-/* ===== SEÇÕES DE TEXTO ===== */
 h2 {
   color: #66ccff;
   border-bottom: 2px solid #3366ff;
@@ -176,7 +209,6 @@ footer {
   font-size: 0.9rem;
 }
 
-/* ===== RESPONSIVIDADE ===== */
 @media (max-width: 600px) {
   h1 { font-size: 1.8rem; }
   .controles { flex-direction: column; }

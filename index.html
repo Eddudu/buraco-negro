@@ -16,8 +16,8 @@
       <canvas id="blackholeCanvas" width="800" height="600"></canvas>
       <div class="controles">
         <div class="slider-container">
-          <label for="massa-slider">Massa (M☉):</label>
-          <input type="range" id="massa-slider" min="1" max="1000" value="10" step="1">
+          <label for="massa-slider">Massa (log M☉):</label>
+          <input type="range" id="massa-slider" min="0" max="6" value="1" step="0.01">
           <span id="massa-valor">10</span>
         </div>
         <div class="slider-container">
@@ -28,7 +28,22 @@
         <button id="btn-animar">Pausar</button>
         <button id="btn-reset">Resetar Posição</button>
       </div>
-      <p class="hint">🖱️ Arraste o buraco negro para movê-lo</p>
+      <p class="hint">🖱️ Arraste o buraco negro ou astros para movê-los</p>
+    </div>
+
+    <!-- Painel de comparação com astros -->
+    <div class="panel-astros">
+      <h3>🌍 Comparar com astros</h3>
+      <p>Clique para adicionar um astro à cena:</p>
+      <div class="botoes-astros">
+        <button class="astro-btn" data-nome="Terra" data-raio="6371" data-cor="#4d7ab5">Terra</button>
+        <button class="astro-btn" data-nome="Júpiter" data-raio="69911" data-cor="#c78b6e">Júpiter</button>
+        <button class="astro-btn" data-nome="Sol" data-raio="696340" data-cor="#ffcc00">Sol</button>
+        <button class="astro-btn" data-nome="Anã Branca" data-raio="7000" data-cor="#ccddff">Anã Branca</button>
+        <button class="astro-btn" data-nome="Estrela de Nêutrons" data-raio="10" data-cor="#aaddff">Estrela de Nêutrons</button>
+        <button class="astro-btn" data-nome="Lua" data-raio="1737" data-cor="#cccccc">Lua</button>
+      </div>
+      <button id="btn-limpar-astros">Limpar astros</button>
     </div>
 
     <!-- Resultados dinâmicos -->

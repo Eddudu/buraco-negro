@@ -55,13 +55,13 @@ h1 {
 canvas {
   border-radius: 15px;
   border: 2px solid #3366ff;
-  box-shadow: 0 0 25px rgba(0, 100, 255, 0.5);
+  box-shadow: 0 0 40px rgba(0, 150, 255, 0.6), 0 0 80px rgba(255, 150, 0, 0.3);
   background: black;
   width: 100%;
   max-width: 800px;
   height: auto;
   cursor: grab;
-  touch-action: none; /* para arrastar no celular */
+  touch-action: none;
 }
 
 canvas:active {

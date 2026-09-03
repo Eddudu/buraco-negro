@@ -214,3 +214,18 @@ footer {
   .controles { flex-direction: column; }
   input[type="range"] { width: 150px; }
 }
+
+.formula {
+  background: rgba(0, 0, 0, 0.5);
+  border-left: 4px solid #ffcc00;
+  padding: 10px 15px;
+  margin: 10px 0;
+  font-family: 'Courier New', monospace;
+  font-size: 1.1rem;
+  color: #ffcc00;
+  letter-spacing: 1px;
+}
+
+section p {
+  text-align: justify;
+}

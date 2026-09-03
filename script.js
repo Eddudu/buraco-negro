@@ -1,11 +1,7 @@
 // =============================================
-// BUraco Negro Interativo - script.js
-// Autor: [Seu Nome]
-// Descrição: Visualização de buraco negro com animação,
-// lente gravitacional, acreção em espiral, arrasto e spin.
+// BUraco Negro Interativo - script.js (versão aprimorada)
 // =============================================
 
-// ===== ELEMENTOS DOM =====
 const canvas = document.getElementById('blackholeCanvas');
 const ctx = canvas.getContext('2d');
 const massaSlider = document.getElementById('massa-slider');
@@ -16,41 +12,42 @@ const btnAnimar = document.getElementById('btn-animar');
 const btnReset = document.getElementById('btn-reset');
 const resultadoDiv = document.getElementById('resultado');
 
-// ===== VARIÁVEIS GLOBAIS =====
-let massaSolar = 10;        // massa em massas solares
-let spin = 0.5;             // parâmetro de rotação (0 a 1)
+let massaSolar = 10;
+let spin = 0.5;
 let animacaoAtiva = true;
 let arrastando = false;
-let offsetX = 0, offsetY = 0; // para arrastar
-
-// Posição do buraco negro (centro padrão)
+let offsetX = 0, offsetY = 0;
 let bhX = canvas.width / 2;
 let bhY = canvas.height / 2;
 
-// Arrays de objetos
 let estrelasFundo = [];
 let particulasAcrecao = [];
 let anguloDisco = 0;
 
-// Constantes físicas
 const KM_POR_MASSA_SOLAR = 2.95;
 const MASSA_SOL_KG = 1.989e30;
 
-// ===== INICIALIZAÇÃO =====
+// NOVO: fator de escala maior
+function escalaVisual(massa) {
+  // Ajuste para dar destaque: cresce mais devagar, mas bem maior
+  return Math.pow(massa, 0.6) * 6; // antes era sqrt(massa)*4
+}
+
 function init() {
-  // Gera estrelas de fundo fixas (posição, tamanho, brilho, cor)
-  for (let i = 0; i < 300; i++) {
+  // Mais estrelas, com cores variadas
+  for (let i = 0; i < 400; i++) {
+    const brilho = Math.random() * 0.8 + 0.2;
+    const cor = Math.random() > 0.7 ? 'rgba(180,200,255,' : 'rgba(255,255,255,';
     estrelasFundo.push({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      raio: Math.random() * 1.5 + 0.5,
-      brilho: Math.random() * 0.8 + 0.2,
-      cor: `rgba(255, 255, 255, ${Math.random() * 0.8 + 0.2})`
+      raio: Math.random() * 1.8 + 0.5,
+      brilho: brilho,
+      cor: cor + brilho + ')'
     });
   }
 
-  // Cria partículas de acreção (espiral)
-  for (let i = 0; i < 200; i++) {
+  for (let i = 0; i < 250; i++) {
     criarParticula();
   }
 
@@ -58,27 +55,24 @@ function init() {
   requestAnimationFrame(draw);
 }
 
-// Cria uma partícula em espiral em direção ao buraco negro
 function criarParticula() {
-  const raioInicial = Math.random() * 350 + 100; // distância inicial do centro
+  const raioInicial = Math.random() * 400 + 100;
   const anguloInicial = Math.random() * Math.PI * 2;
-  const velocidadeAngular = (Math.random() * 0.02 + 0.005) * (Math.random() > 0.5 ? 1 : -1);
-  const velocidadeRadial = Math.random() * 0.2 + 0.05; // velocidade de queda
-  const cor = `hsl(${Math.random() * 60 + 20}, 100%, 60%)`;
+  const velocidadeAngular = (Math.random() * 0.03 + 0.005) * (Math.random() > 0.5 ? 1 : -1);
+  const velocidadeRadial = Math.random() * 0.25 + 0.05;
+  const cor = `hsl(${Math.random() * 50 + 15}, 100%, ${Math.random() * 30 + 50}%)`;
   particulasAcrecao.push({
     raio: raioInicial,
     angulo: anguloInicial,
     velAngular: velocidadeAngular,
     velRadial: velocidadeRadial,
-    raioParticula: Math.random() * 2 + 1,
+    raioParticula: Math.random() * 2.5 + 1,
     cor: cor,
-    // Para excentricidade e variedade
-    excentricidade: Math.random() * 0.2,
-    fase: Math.random() * Math.PI * 2
+    // trail
+    trail: []
   });
 }
 
-// ===== ATUALIZAÇÃO DOS CÁLCULOS =====
 function atualizarCalculos() {
   massaValor.textContent = massaSolar;
   spinValor.textContent = spin.toFixed(2);
@@ -91,9 +85,6 @@ function atualizarCalculos() {
   const densidadeAgua = 1000;
   const comparacao = densidade / densidadeAgua;
   const tempHawking = (6.17e-8) / massaSolar;
-
-  // Fórmula simplificada do raio do horizonte para buraco de Kerr (ergosfera)
-  // R = M + sqrt(M² - a²), onde a = spin * M
   const a = spin * massaSolar;
   const rHorizonte = massaSolar + Math.sqrt(massaSolar*massaSolar - a*a);
 
@@ -102,61 +93,65 @@ function atualizarCalculos() {
     ----------------------------------------
     Massa: ${massaSolar} M☉ (${massaKg.toExponential(3)} kg)
     Spin: ${spin.toFixed(2)}
-    Raio de Schwarzschild (sem rotação): ${raioKm.toFixed(2)} km
-    Raio do horizonte (com rotação): ${rHorizonte.toFixed(2)} km
+    Raio de Schwarzschild: ${raioKm.toFixed(2)} km
+    Raio do horizonte (Kerr): ${rHorizonte.toFixed(2)} km
     Densidade média: ${densidade.toExponential(3)} kg/m³
-    Densidade comparada à água: ${comparacao.toExponential(2)} vezes
+    Densidade vs água: ${comparacao.toExponential(2)}x
     Temperatura Hawking: ${tempHawking.toExponential(3)} K
   `;
 }
 
-// ===== DESENHO =====
 function draw() {
   if (animacaoAtiva) {
-    // Atualiza ângulo global do disco
-    anguloDisco += 0.01;
-
-    // Atualiza partículas em espiral
+    anguloDisco += 0.012;
     for (let i = particulasAcrecao.length - 1; i >= 0; i--) {
       const p = particulasAcrecao[i];
-      // Aumenta ângulo (rotação) e diminui raio (queda)
       p.angulo += p.velAngular;
       p.raio -= p.velRadial;
-
-      // Se a partícula caiu dentro do horizonte, recria
-      const raioBH = Math.sqrt(massaSolar) * 4; // escala visual
+      const raioBH = escalaVisual(massaSolar);
       if (p.raio < raioBH * 0.8) {
         particulasAcrecao.splice(i, 1);
-        criarParticula(); // mantém quantidade constante
+        criarParticula();
+        continue;
       }
+      // Atualiza trail (últimas posições)
+      p.trail.push({x: bhX + Math.cos(p.angulo) * p.raio, y: bhY + Math.sin(p.angulo) * p.raio * 0.4});
+      if (p.trail.length > 8) p.trail.shift();
     }
   }
-
   desenharCena();
   requestAnimationFrame(draw);
 }
 
 function desenharCena() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  // Fundo preto
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Desenha estrelas de fundo com lente gravitacional
   desenharEstrelasComLente();
 
-  // Raio visual do buraco negro (baseado na massa e spin)
-  const raioBH = Math.sqrt(massaSolar) * 4;
-  // Achatamento devido à rotação (efeito Kerr)
-  const raioHorizontal = raioBH * (1 - 0.3 * spin);
-  const raioVertical = raioBH * (1 + 0.1 * spin);
+  const raioBH = escalaVisual(massaSolar);
+  const achatamento = 1 - 0.25 * spin;
+  const raioHorizontal = raioBH;
+  const raioVertical = raioBH * achatamento;
 
-  // ===== DISCO DE ACRÉÇÃO =====
   desenharDiscoAcrecao(raioHorizontal, raioVertical);
 
-  // ===== PARTÍCULAS EM ESPIRAL =====
+  // Partículas com trail
   for (const p of particulasAcrecao) {
-    // Posição com leve achatamento vertical
+    // Desenha trail
+    if (p.trail.length > 1) {
+      ctx.beginPath();
+      ctx.moveTo(p.trail[0].x, p.trail[0].y);
+      for (let j = 1; j < p.trail.length; j++) {
+        ctx.lineTo(p.trail[j].x, p.trail[j].y);
+      }
+      ctx.strokeStyle = p.cor;
+      ctx.lineWidth = p.raioParticula * 0.5;
+      ctx.globalAlpha = 0.4;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
     const x = bhX + Math.cos(p.angulo) * p.raio;
     const y = bhY + Math.sin(p.angulo) * p.raio * 0.4;
     ctx.beginPath();
@@ -165,36 +160,46 @@ function desenharCena() {
     ctx.fill();
   }
 
-  // ===== HORIZONTE DE EVENTOS =====
+  // Horizonte de eventos com brilho
   ctx.save();
   ctx.translate(bhX, bhY);
-  // Rotação visual do horizonte (achatado)
-  ctx.scale(1, 1 - 0.2 * spin);
+  ctx.scale(1, achatamento);
+  // Sombra interna
+  const gradSombra = ctx.createRadialGradient(0, 0, raioBH * 0.5, 0, 0, raioBH);
+  gradSombra.addColorStop(0, 'rgba(0,0,0,1)');
+  gradSombra.addColorStop(0.8, 'rgba(0,0,0,0.9)');
+  gradSombra.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.beginPath();
   ctx.arc(0, 0, raioBH, 0, Math.PI * 2);
-  ctx.fillStyle = '#000';
+  ctx.fillStyle = gradSombra;
   ctx.fill();
-  ctx.shadowColor = 'rgba(255, 180, 0, 0.8)';
-  ctx.shadowBlur = 25;
-  ctx.strokeStyle = 'rgba(255, 200, 100, 0.6)';
-  ctx.lineWidth = 2;
-  ctx.stroke();
-  ctx.restore();
 
-  // Brilho central
-  const grad = ctx.createRadialGradient(bhX, bhY, 0, bhX, bhY, raioBH * 2);
-  grad.addColorStop(0, 'rgba(255, 255, 255, 0.15)');
-  grad.addColorStop(1, 'rgba(0,0,0,0)');
+  // Anel de fótons (brilhante)
+  ctx.shadowColor = 'rgba(255, 180, 50, 0.9)';
+  ctx.shadowBlur = 40;
   ctx.beginPath();
-  ctx.arc(bhX, bhY, raioBH * 2, 0, Math.PI * 2);
-  ctx.fillStyle = grad;
+  ctx.arc(0, 0, raioBH, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(255, 220, 150, 0.9)';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Brilho interno
+  const gradCentral = ctx.createRadialGradient(0, 0, raioBH * 0.2, 0, 0, raioBH * 1.2);
+  gradCentral.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
+  gradCentral.addColorStop(0.5, 'rgba(255, 200, 100, 0.1)');
+  gradCentral.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.beginPath();
+  ctx.arc(0, 0, raioBH * 1.2, 0, Math.PI * 2);
+  ctx.fillStyle = gradCentral;
   ctx.fill();
+
+  ctx.restore();
 }
 
-// Desenha estrelas com efeito de lente gravitacional
 function desenharEstrelasComLente() {
-  const raioBH = Math.sqrt(massaSolar) * 4;
-  const raioInfluencia = raioBH * 6;
+  const raioBH = escalaVisual(massaSolar);
+  const raioInfluencia = raioBH * 5;
 
   for (const estrela of estrelasFundo) {
     const dx = estrela.x - bhX;
@@ -205,84 +210,80 @@ function desenharEstrelasComLente() {
     let y = estrela.y;
     let brilho = estrela.brilho;
 
-    // Se estiver perto do buraco negro, aplica distorção radial
     if (dist < raioInfluencia) {
-      // Fator de deslocamento (simula curvatura)
-      const fator = (1 - dist / raioInfluencia) * 15; // pixels de desvio
-      const desvioX = (dx / dist) * fator;
-      const desvioY = (dy / dist) * fator;
-      x = estrela.x - desvioX;
-      y = estrela.y - desvioY;
-      // Aumenta brilho aparente perto do buraco (lente)
-      brilho = Math.min(1, estrela.brilho + (1 - dist / raioInfluencia) * 0.5);
+      const fator = (1 - dist / raioInfluencia) * 25; // maior desvio
+      if (dist > 0.1) {
+        const desvioX = (dx / dist) * fator;
+        const desvioY = (dy / dist) * fator;
+        x = estrela.x - desvioX;
+        y = estrela.y - desvioY;
+      }
+      brilho = Math.min(1, estrela.brilho + (1 - dist / raioInfluencia) * 0.7);
     }
 
     ctx.beginPath();
     ctx.arc(x, y, estrela.raio, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(255, 255, 255, ${brilho})`;
+    ctx.fillStyle = estrela.cor;
+    ctx.globalAlpha = brilho;
     ctx.fill();
+    ctx.globalAlpha = 1;
   }
 }
 
-// Desenha o disco de acreção com rotação diferencial (Kerr)
 function desenharDiscoAcrecao(raioHorizontal, raioVertical) {
-  const aneis = 6;
+  const aneis = 8;
   for (let i = 0; i < aneis; i++) {
-    const raioAnel = raioHorizontal * (1.3 + i * 0.35);
-    // Rotação angular depende do raio (mais rápido perto do centro) e do spin
-    const velRotacao = anguloDisco * (1 + (1 - i / aneis) * 2 + spin * 0.5);
+    const raioAnel = raioHorizontal * (1.2 + i * 0.3);
+    const velRotacao = anguloDisco * (1 + (1 - i / aneis) * 2 + spin * 0.8);
     ctx.save();
     ctx.translate(bhX, bhY);
     ctx.rotate(velRotacao);
     ctx.beginPath();
     ctx.ellipse(0, 0, raioAnel, raioAnel * 0.35, 0, 0, Math.PI * 2);
-    // Gradiente de cor laranja
+    // Gradiente mais vivo
     const grad = ctx.createLinearGradient(-raioAnel, 0, raioAnel, 0);
-    grad.addColorStop(0, 'rgba(255, 100, 0, 0.7)');
-    grad.addColorStop(0.5, 'rgba(255, 200, 0, 0.4)');
-    grad.addColorStop(1, 'rgba(255, 100, 0, 0.7)');
+    grad.addColorStop(0, 'rgba(255, 80, 0, 0.9)');
+    grad.addColorStop(0.3, 'rgba(255, 200, 50, 0.8)');
+    grad.addColorStop(0.5, 'rgba(255, 255, 200, 0.9)');
+    grad.addColorStop(0.7, 'rgba(255, 180, 30, 0.8)');
+    grad.addColorStop(1, 'rgba(255, 80, 0, 0.9)');
     ctx.strokeStyle = grad;
-    ctx.lineWidth = 8 + i * 2;
+    ctx.lineWidth = 10 + i * 2;
+    ctx.shadowColor = 'rgba(255, 150, 0, 0.6)';
+    ctx.shadowBlur = 15;
     ctx.stroke();
     ctx.restore();
   }
 }
 
-// ===== INTERAÇÕES =====
-
-// Slider de massa
+// ===== INTERAÇÕES (mantidas) =====
 massaSlider.addEventListener('input', function() {
   massaSolar = parseFloat(this.value);
   atualizarCalculos();
 });
 
-// Slider de spin
 spinSlider.addEventListener('input', function() {
   spin = parseFloat(this.value);
   atualizarCalculos();
 });
 
-// Botão pausar/retomar
 btnAnimar.addEventListener('click', function() {
   animacaoAtiva = !animacaoAtiva;
   btnAnimar.textContent = animacaoAtiva ? 'Pausar' : 'Animar';
 });
 
-// Botão resetar posição
 btnReset.addEventListener('click', function() {
   bhX = canvas.width / 2;
   bhY = canvas.height / 2;
 });
 
-// Arrastar o buraco negro com o mouse
 canvas.addEventListener('mousedown', function(e) {
   const rect = canvas.getBoundingClientRect();
   const mouseX = e.clientX - rect.left;
   const mouseY = e.clientY - rect.top;
-  // Verifica se clicou perto do buraco negro (raio de arrasto)
+  const raioArrasto = escalaVisual(massaSolar) * 1.5;
   const dx = mouseX - bhX;
   const dy = mouseY - bhY;
-  const raioArrasto = Math.sqrt(massaSolar) * 4 + 20; // margem
   if (Math.sqrt(dx*dx + dy*dy) < raioArrasto) {
     arrastando = true;
     offsetX = dx;
@@ -296,9 +297,8 @@ canvas.addEventListener('mousemove', function(e) {
     const rect = canvas.getBoundingClientRect();
     bhX = e.clientX - rect.left - offsetX;
     bhY = e.clientY - rect.top - offsetY;
-    // Mantém dentro dos limites
-    bhX = Math.max(50, Math.min(canvas.width - 50, bhX));
-    bhY = Math.max(50, Math.min(canvas.height - 50, bhY));
+    bhX = Math.max(30, Math.min(canvas.width - 30, bhX));
+    bhY = Math.max(30, Math.min(canvas.height - 30, bhY));
   }
 });
 
@@ -312,16 +312,16 @@ canvas.addEventListener('mouseleave', function() {
   canvas.style.cursor = 'grab';
 });
 
-// Suporte a toque (mobile)
+// Suporte a touch
 canvas.addEventListener('touchstart', function(e) {
   e.preventDefault();
   const touch = e.touches[0];
   const rect = canvas.getBoundingClientRect();
   const mouseX = touch.clientX - rect.left;
   const mouseY = touch.clientY - rect.top;
+  const raioArrasto = escalaVisual(massaSolar) * 1.5;
   const dx = mouseX - bhX;
   const dy = mouseY - bhY;
-  const raioArrasto = Math.sqrt(massaSolar) * 4 + 20;
   if (Math.sqrt(dx*dx + dy*dy) < raioArrasto) {
     arrastando = true;
     offsetX = dx;
@@ -336,8 +336,8 @@ canvas.addEventListener('touchmove', function(e) {
     const rect = canvas.getBoundingClientRect();
     bhX = touch.clientX - rect.left - offsetX;
     bhY = touch.clientY - rect.top - offsetY;
-    bhX = Math.max(50, Math.min(canvas.width - 50, bhX));
-    bhY = Math.max(50, Math.min(canvas.height - 50, bhY));
+    bhX = Math.max(30, Math.min(canvas.width - 30, bhX));
+    bhY = Math.max(30, Math.min(canvas.height - 30, bhY));
   }
 }, { passive: false });
 
@@ -345,5 +345,5 @@ canvas.addEventListener('touchend', function() {
   arrastando = false;
 });
 
-// ===== INICIAR TUDO =====
+// ===== INICIAR =====
 init();

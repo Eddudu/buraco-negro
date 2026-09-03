@@ -1,0 +1,184 @@
+/* ===== RESET E ESTILO GERAL ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background: radial-gradient(circle at center, #0b0b2b, #000000);
+  color: #e0e0e0;
+  min-height: 100vh;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 10px;
+  color: #ffcc00;
+  text-shadow: 0 0 10px #ff9900, 0 0 20px #ff6600;
+  font-size: 2.5rem;
+  letter-spacing: 2px;
+}
+
+.subtitle {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #ccc;
+  font-style: italic;
+}
+
+.container {
+  max-width: 1100px;
+  width: 100%;
+  background: rgba(20, 20, 40, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 0 30px rgba(0, 100, 255, 0.3);
+  border: 1px solid #3366ff;
+  margin-bottom: 30px;
+}
+
+/* ===== CANVAS E CONTROLES ===== */
+.canvas-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+}
+
+canvas {
+  border-radius: 15px;
+  border: 2px solid #3366ff;
+  box-shadow: 0 0 25px rgba(0, 100, 255, 0.5);
+  background: black;
+  width: 100%;
+  max-width: 800px;
+  height: auto;
+  cursor: grab;
+  touch-action: none; /* para arrastar no celular */
+}
+
+canvas:active {
+  cursor: grabbing;
+}
+
+.controles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+  margin: 15px 0;
+}
+
+.slider-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+input[type="range"] {
+  width: 200px;
+  accent-color: #ff9900;
+}
+
+button {
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(45deg, #ff6600, #ff9900);
+  color: #000;
+  font-weight: bold;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #ff9900;
+}
+
+#massa-valor,
+#spin-valor {
+  font-size: 1.1rem;
+  color: #ffcc00;
+  min-width: 70px;
+  text-align: center;
+}
+
+.hint {
+  color: #aaa;
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+/* ===== RESULTADOS ===== */
+#resultado {
+  background: #0a0a20;
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #ffcc00;
+  margin: 15px 0;
+  white-space: pre-wrap;
+  font-family: 'Courier New', monospace;
+}
+
+/* ===== SEÇÕES DE TEXTO ===== */
+h2 {
+  color: #66ccff;
+  border-bottom: 2px solid #3366ff;
+  padding-bottom: 5px;
+  margin: 25px 0 15px;
+}
+
+p, li {
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+ul {
+  list-style-type: square;
+  padding-left: 25px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 15px 0;
+}
+
+th, td {
+  border: 1px solid #3366ff;
+  padding: 12px;
+  text-align: left;
+}
+
+th {
+  background-color: #1a1a40;
+  color: #ffcc00;
+}
+
+tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+footer {
+  margin-top: 20px;
+  text-align: center;
+  color: #888;
+  font-size: 0.9rem;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 600px) {
+  h1 { font-size: 1.8rem; }
+  .controles { flex-direction: column; }
+  input[type="range"] { width: 150px; }
+}

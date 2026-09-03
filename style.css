@@ -32,7 +32,7 @@ h1 {
 }
 
 .container {
-  max-width: 1100px;
+  max-width: 1000px;
   width: 100%;
   background: rgba(20, 20, 40, 0.8);
   backdrop-filter: blur(10px);
@@ -53,7 +53,7 @@ h1 {
 canvas {
   border-radius: 15px;
   border: 2px solid #3366ff;
-  box-shadow: 0 0 40px rgba(0, 150, 255, 0.6), 0 0 80px rgba(255, 150, 0, 0.3);
+  box-shadow: 0 0 25px rgba(0, 100, 255, 0.5);
   background: black;
   width: 100%;
   max-width: 800px;
@@ -103,7 +103,8 @@ button:hover {
   box-shadow: 0 0 15px #ff9900;
 }
 
-#massa-valor, #spin-valor {
+#massa-valor,
+#spin-valor {
   font-size: 1.1rem;
   color: #ffcc00;
   min-width: 70px;
@@ -114,44 +115,6 @@ button:hover {
   color: #aaa;
   font-size: 0.9rem;
   margin-top: 5px;
-}
-
-.panel-astros {
-  background: rgba(30, 30, 60, 0.8);
-  border: 1px solid #3366ff;
-  border-radius: 10px;
-  padding: 15px;
-  margin: 15px 0;
-}
-
-.panel-astros h3 {
-  color: #ffcc00;
-  margin-bottom: 10px;
-}
-
-.botoes-astros {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.astro-btn {
-  background: linear-gradient(45deg, #1a1a40, #3366ff);
-  color: white;
-  font-size: 0.9rem;
-  padding: 8px 14px;
-  border: 1px solid #6699ff;
-}
-
-.astro-btn:hover {
-  box-shadow: 0 0 10px #6699ff;
-  transform: scale(1.05);
-}
-
-#btn-limpar-astros {
-  background: linear-gradient(45deg, #cc0000, #ff3300);
-  color: white;
 }
 
 #resultado {
@@ -171,7 +134,8 @@ h2 {
   margin: 25px 0 15px;
 }
 
-p, li {
+p,
+li {
   line-height: 1.6;
   margin-bottom: 10px;
 }
@@ -187,7 +151,8 @@ table {
   margin: 15px 0;
 }
 
-th, td {
+th,
+td {
   border: 1px solid #3366ff;
   padding: 12px;
   text-align: left;
@@ -200,19 +165,6 @@ th {
 
 tr:nth-child(even) {
   background-color: rgba(255, 255, 255, 0.05);
-}
-
-footer {
-  margin-top: 20px;
-  text-align: center;
-  color: #888;
-  font-size: 0.9rem;
-}
-
-@media (max-width: 600px) {
-  h1 { font-size: 1.8rem; }
-  .controles { flex-direction: column; }
-  input[type="range"] { width: 150px; }
 }
 
 .formula {
@@ -230,38 +182,11 @@ section p {
   text-align: justify;
 }
 
-/* Adicione ao CSS existente */
-
-.panel-bhs {
-  background: rgba(30, 30, 60, 0.8);
-  border: 1px solid #3366ff;
-  border-radius: 10px;
-  padding: 15px;
-  margin: 15px 0;
-}
-
-.panel-bhs h3 {
-  color: #ffcc00;
-  margin-bottom: 10px;
-}
-
-.botoes-bhs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.bh-btn {
-  background: linear-gradient(45deg, #1a1a40, #6633cc);
-  color: white;
+footer {
+  margin-top: 20px;
+  text-align: center;
+  color: #888;
   font-size: 0.9rem;
-  padding: 8px 14px;
-  border: 1px solid #9966ff;
-}
-
-.bh-btn:hover {
-  box-shadow: 0 0 10px #9966ff;
-  transform: scale(1.05);
 }
 
 #btn-reload {
@@ -285,4 +210,10 @@ section p {
 #btn-reload:hover {
   background: rgba(20, 20, 40, 0.9);
   box-shadow: 0 0 15px rgba(0, 150, 255, 0.8);
+}
+
+@media (max-width: 600px) {
+  h1 { font-size: 1.8rem; }
+  .controles { flex-direction: column; }
+  input[type="range"] { width: 150px; }
 }

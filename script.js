@@ -392,3 +392,9 @@ function onTouchEnd() {
 
 // ===== INICIAR =====
 init();
+
+// Botão de atualizar página
+document.getElementById('btn-reload').addEventListener('click', function() {
+  location.reload();
+});
+

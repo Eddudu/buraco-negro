@@ -1,13 +1,9 @@
 // =============================================
 // Buraco Negro Interativo - script.js
-// (inclui seleção de buracos negros reais)
 // =============================================
 
 const canvas = document.getElementById('blackholeCanvas');
 const ctx = canvas.getContext('2d');
-const miniCanvas = document.getElementById('comparacaoCanvas');
-const miniCtx = miniCanvas.getContext('2d');
-
 const massaSlider = document.getElementById('massa-slider');
 const spinSlider = document.getElementById('spin-slider');
 const massaValor = document.getElementById('massa-valor');
@@ -15,9 +11,7 @@ const spinValor = document.getElementById('spin-valor');
 const btnAnimar = document.getElementById('btn-animar');
 const btnReset = document.getElementById('btn-reset');
 const resultadoDiv = document.getElementById('resultado');
-const botoesAstros = document.querySelectorAll('.astro-btn');
-const btnLimparAstros = document.getElementById('btn-limpar-astros');
-const botoesBHs = document.querySelectorAll('.bh-btn');
+const btnReload = document.getElementById('btn-reload');
 
 let massaSolar = 10;
 let spin = 0.5;
@@ -30,16 +24,12 @@ let bhY = canvas.height / 2;
 let estrelasFundo = [];
 let particulasAcrecao = [];
 let anguloDisco = 0;
-let astrosAdicionados = [];
 
 const KM_POR_MASSA_SOLAR = 2.95;
 const MASSA_SOL_KG = 1.989e30;
 
-// Escala visual para o canvas principal
 function escalaVisual(massa) {
-  // Limita o raio máximo para caber na tela
-  const raio = Math.sqrt(massa) * 4;
-  return Math.min(raio, 120); // máximo 120px
+  return Math.min(Math.sqrt(massa) * 4, 120);
 }
 
 function getRaioSchwarzschildKm(massa) {
@@ -52,7 +42,6 @@ function getKmPorPixel(massa) {
   return raioKm / raioPx;
 }
 
-// ===== INICIALIZAÇÃO =====
 function init() {
   // Estrelas de fundo
   for (let i = 0; i < 400; i++) {
@@ -67,13 +56,13 @@ function init() {
     });
   }
 
+  // Partículas
   for (let i = 0; i < 200; i++) criarParticula();
 
   // Sliders
   massaSlider.addEventListener('input', function() {
     massaSolar = parseFloat(this.value);
     atualizarCalculos();
-    desenharMiniComparacao();
   });
   spinSlider.addEventListener('input', function() {
     spin = parseFloat(this.value);
@@ -84,38 +73,17 @@ function init() {
     animacaoAtiva = !animacaoAtiva;
     btnAnimar.textContent = animacaoAtiva ? 'Pausar' : 'Animar';
   });
+
   btnReset.addEventListener('click', function() {
     bhX = canvas.width / 2;
     bhY = canvas.height / 2;
   });
 
-  // Botões de buracos negros reais
-  botoesBHs.forEach(btn => {
-    btn.addEventListener('click', function() {
-      const nome = this.dataset.nome;
-      const massa = parseFloat(this.dataset.massa);
-      const spinVal = parseFloat(this.dataset.spin);
-      aplicarBuracoNegro(nome, massa, spinVal);
-    });
+  btnReload.addEventListener('click', function() {
+    location.reload();
   });
 
-  // Botões de astros
-  botoesAstros.forEach(btn => {
-    btn.addEventListener('click', function() {
-      const nome = this.dataset.nome;
-      const raioKm = parseFloat(this.dataset.raio);
-      const cor = this.dataset.cor;
-      adicionarAstro(nome, raioKm, cor);
-      desenharMiniComparacao();
-    });
-  });
-
-  btnLimparAstros.addEventListener('click', function() {
-    astrosAdicionados = [];
-    desenharMiniComparacao();
-  });
-
-  // Eventos de arrasto
+  // Arrasto
   canvas.addEventListener('mousedown', onMouseDown);
   canvas.addEventListener('mousemove', onMouseMove);
   canvas.addEventListener('mouseup', onMouseUp);
@@ -125,31 +93,9 @@ function init() {
   canvas.addEventListener('touchend', onTouchEnd);
 
   atualizarCalculos();
-  desenharMiniComparacao();
   requestAnimationFrame(draw);
 }
 
-// ===== APLICAR BURACO NEGRO ESPECÍFICO =====
-function aplicarBuracoNegro(nome, massa, spinValor) {
-  massaSolar = massa;
-  spin = spinValor;
-  // Atualiza sliders (limitando para não quebrar a interface)
-  if (massa > 1000) {
-    // Para massas grandes, usamos escala logarítmica no slider (se suportar)
-    // Como nosso slider é linear 1-1000, ajustamos para o máximo se maior que 1000
-    massaSlider.value = 1000;
-    massaSolar = 1000; // limitamos para visualização
-    alert(`Massa de ${nome} é muito grande para o slider linear. Limitando a 1000 M☉ para visualização.`);
-  } else {
-    massaSlider.value = massa;
-  }
-  if (spinValor > 0.99) spinValor = 0.99;
-  spinSlider.value = spinValor;
-  atualizarCalculos();
-  desenharMiniComparacao();
-}
-
-// ===== PARTÍCULAS =====
 function criarParticula() {
   const raioInicial = Math.random() * 350 + 100;
   const anguloInicial = Math.random() * Math.PI * 2;
@@ -167,24 +113,8 @@ function criarParticula() {
   });
 }
 
-// ===== ADICIONAR ASTRO =====
-function adicionarAstro(nome, raioKm, cor) {
-  const kmPorPixel = getKmPorPixel(massaSolar);
-  let raioPx = raioKm / kmPorPixel;
-  let limiteEscala = false;
-  if (raioPx > 60) {
-    raioPx = 60;
-    limiteEscala = true;
-  } else if (raioPx < 1) {
-    raioPx = 2;
-    limiteEscala = true;
-  }
-  astrosAdicionados.push({ nome, raioKm, cor, raioPx, limiteEscala });
-}
-
-// ===== ATUALIZAR CÁLCULOS =====
 function atualizarCalculos() {
-  massaValor.textContent = massaSolar >= 1e6 ? massaSolar.toExponential(1) : massaSolar;
+  massaValor.textContent = massaSolar;
   spinValor.textContent = spin.toFixed(2);
 
   const raioKm = getRaioSchwarzschildKm(massaSolar);
@@ -210,7 +140,6 @@ function atualizarCalculos() {
   `;
 }
 
-// ===== DESENHO PRINCIPAL (igual ao modelo anterior) =====
 function draw() {
   if (animacaoAtiva) {
     anguloDisco += 0.008;
@@ -266,65 +195,136 @@ function desenharCena() {
   desenharDiscoAcrecaoFrontal(raioBH, raioBH * achatamento);
 }
 
-// (mantenha as funções desenharEstrelasComLente, desenharDiscoAcrecaoTraseira,
-// desenharDiscoAcrecaoFrontal, desenharHorizonteEventos da resposta anterior,
-// pois são as mesmas do 3º modelo)
-// ... (copie do código anterior)
+function desenharEstrelasComLente() {
+  const raioBH = escalaVisual(massaSolar);
+  const raioInfluencia = raioBH * 5;
 
-// ===== DESENHO DO MINI CANVAS (comparação) =====
-function desenharMiniComparacao() {
-  miniCtx.clearRect(0, 0, miniCanvas.width, miniCanvas.height);
-  miniCtx.fillStyle = '#000';
-  miniCtx.fillRect(0, 0, miniCanvas.width, miniCanvas.height);
+  for (const estrela of estrelasFundo) {
+    const dx = estrela.x - bhX;
+    const dy = estrela.y - bhY;
+    const dist = Math.sqrt(dx*dx + dy*dy);
 
-  const centroX = miniCanvas.width / 2;
-  const centroY = miniCanvas.height / 2;
-  const raioBH = Math.min(30, escalaVisual(massaSolar) * 0.4);
+    let x = estrela.x;
+    let y = estrela.y;
+    let brilho = estrela.brilho;
 
-  miniCtx.beginPath();
-  miniCtx.arc(centroX, centroY, raioBH, 0, Math.PI * 2);
-  miniCtx.fillStyle = '#000';
-  miniCtx.fill();
-  miniCtx.strokeStyle = 'rgba(255,200,100,0.8)';
-  miniCtx.lineWidth = 2;
-  miniCtx.stroke();
+    if (dist < raioInfluencia) {
+      const fator = (1 - dist / raioInfluencia) * 20;
+      if (dist > 0.1) {
+        const desvioX = (dx / dist) * fator;
+        const desvioY = (dy / dist) * fator;
+        x = estrela.x - desvioX;
+        y = estrela.y - desvioY;
+      }
+      brilho = Math.min(1, estrela.brilho + (1 - dist / raioInfluencia) * 0.5);
+    }
 
-  const numAstros = astrosAdicionados.length;
-  if (numAstros === 0) {
-    miniCtx.fillStyle = '#888';
-    miniCtx.font = '12px Segoe UI';
-    miniCtx.textAlign = 'center';
-    miniCtx.fillText('Nenhum astro adicionado', centroX, centroY - raioBH - 15);
-    return;
-  }
-
-  const raioOrbita = raioBH + 30;
-  for (let i = 0; i < numAstros; i++) {
-    const astro = astrosAdicionados[i];
-    const angulo = (i * Math.PI * 2) / numAstros;
-    const x = centroX + Math.cos(angulo) * raioOrbita;
-    const y = centroY + Math.sin(angulo) * raioOrbita * 0.7;
-
-    let raioDesenho = astro.raioPx;
-    if (raioDesenho > 40) raioDesenho = 40;
-    if (raioDesenho < 3) raioDesenho = 3;
-
-    const grad = miniCtx.createRadialGradient(x - raioDesenho*0.3, y - raioDesenho*0.3, raioDesenho*0.1, x, y, raioDesenho);
-    grad.addColorStop(0, '#ffffff');
-    grad.addColorStop(0.5, astro.cor);
-    grad.addColorStop(1, '#000');
-    miniCtx.beginPath();
-    miniCtx.arc(x, y, raioDesenho, 0, Math.PI * 2);
-    miniCtx.fillStyle = grad;
-    miniCtx.fill();
-    miniCtx.fillStyle = '#fff';
-    miniCtx.font = '10px Segoe UI';
-    miniCtx.textAlign = 'center';
-    miniCtx.fillText(astro.nome, x, y + raioDesenho + 10);
+    ctx.beginPath();
+    ctx.arc(x, y, estrela.raio, 0, Math.PI * 2);
+    ctx.fillStyle = estrela.cor;
+    ctx.globalAlpha = brilho;
+    ctx.fill();
+    ctx.globalAlpha = 1;
   }
 }
 
-// ===== INTERAÇÕES DE ARRASTO (mantidas, sem astros no canvas principal) =====
+function desenharDiscoAcrecaoTraseira(raioHorizontal, raioVertical) {
+  const aneis = 5;
+  for (let i = 0; i < aneis; i++) {
+    const raioAnel = raioHorizontal * (1.1 + i * 0.3);
+    const velRotacao = anguloDisco * (1 + (1 - i / aneis) * 1.5 + spin * 0.5);
+    ctx.save();
+    ctx.translate(bhX, bhY);
+    ctx.rotate(velRotacao);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, raioAnel, raioAnel * 0.35, 0, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.beginPath();
+    ctx.ellipse(0, 0, raioAnel, raioAnel * 0.35, 0, 0, Math.PI);
+    const grad = ctx.createLinearGradient(-raioAnel, 0, raioAnel, 0);
+    grad.addColorStop(0, 'rgba(255, 80, 0, 0.7)');
+    grad.addColorStop(0.3, 'rgba(255, 200, 50, 0.6)');
+    grad.addColorStop(0.5, 'rgba(255, 255, 200, 0.7)');
+    grad.addColorStop(0.7, 'rgba(255, 180, 30, 0.6)');
+    grad.addColorStop(1, 'rgba(255, 80, 0, 0.7)');
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 8 + i * 1.5;
+    ctx.shadowColor = 'rgba(255, 150, 0, 0.5)';
+    ctx.shadowBlur = 10;
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+function desenharDiscoAcrecaoFrontal(raioHorizontal, raioVertical) {
+  const aneis = 5;
+  for (let i = 0; i < aneis; i++) {
+    const raioAnel = raioHorizontal * (1.1 + i * 0.3);
+    const velRotacao = anguloDisco * (1 + (1 - i / aneis) * 1.5 + spin * 0.5);
+    ctx.save();
+    ctx.translate(bhX, bhY);
+    ctx.rotate(velRotacao);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, raioAnel, raioAnel * 0.35, 0, Math.PI, Math.PI * 2);
+    const grad = ctx.createLinearGradient(-raioAnel, 0, raioAnel, 0);
+    grad.addColorStop(0, 'rgba(255, 80, 0, 0.7)');
+    grad.addColorStop(0.3, 'rgba(255, 200, 50, 0.6)');
+    grad.addColorStop(0.5, 'rgba(255, 255, 200, 0.7)');
+    grad.addColorStop(0.7, 'rgba(255, 180, 30, 0.6)');
+    grad.addColorStop(1, 'rgba(255, 80, 0, 0.7)');
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 8 + i * 1.5;
+    ctx.shadowColor = 'rgba(255, 150, 0, 0.5)';
+    ctx.shadowBlur = 10;
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+function desenharHorizonteEventos(raioBH, achatamento) {
+  ctx.save();
+  ctx.translate(bhX, bhY);
+  ctx.scale(1, achatamento);
+
+  const gradSombra = ctx.createRadialGradient(0, 0, raioBH * 0.2, 0, 0, raioBH);
+  gradSombra.addColorStop(0, 'rgba(0,0,0,1)');
+  gradSombra.addColorStop(0.7, 'rgba(0,0,0,0.95)');
+  gradSombra.addColorStop(1, 'rgba(0,0,0,0.8)');
+  ctx.beginPath();
+  ctx.arc(0, 0, raioBH, 0, Math.PI * 2);
+  ctx.fillStyle = gradSombra;
+  ctx.fill();
+
+  const gradAnel = ctx.createRadialGradient(-raioBH * 0.2, -raioBH * 0.2, raioBH * 0.5, 0, 0, raioBH);
+  gradAnel.addColorStop(0, 'rgba(255, 180, 50, 0.0)');
+  gradAnel.addColorStop(0.5, 'rgba(255, 220, 150, 0.6)');
+  gradAnel.addColorStop(0.8, 'rgba(255, 200, 80, 0.9)');
+  gradAnel.addColorStop(1, 'rgba(255, 150, 0, 0.0)');
+  ctx.beginPath();
+  ctx.arc(0, 0, raioBH, 0, Math.PI * 2);
+  ctx.fillStyle = gradAnel;
+  ctx.fill();
+
+  ctx.shadowColor = 'rgba(255, 200, 100, 0.9)';
+  ctx.shadowBlur = 15;
+  ctx.beginPath();
+  ctx.arc(0, 0, raioBH, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(255, 220, 150, 0.7)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  const gradCentral = ctx.createRadialGradient(0, 0, raioBH * 0.1, 0, 0, raioBH * 0.9);
+  gradCentral.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
+  gradCentral.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.beginPath();
+  ctx.arc(0, 0, raioBH, 0, Math.PI * 2);
+  ctx.fillStyle = gradCentral;
+  ctx.fill();
+
+  ctx.restore();
+}
+
 function obterPosicaoMouse(e) {
   const rect = canvas.getBoundingClientRect();
   return { x: e.clientX - rect.left, y: e.clientY - rect.top };
@@ -390,11 +390,4 @@ function onTouchEnd() {
   arrastandoBH = false;
 }
 
-// ===== INICIAR =====
 init();
-
-// Botão de atualizar página
-document.getElementById('btn-reload').addEventListener('click', function() {
-  location.reload();
-});
-

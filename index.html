@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buracos Negros - Visualização Interativa</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🌀 Buracos Negros</h1>
+    <p class="subtitle">Visualização interativa e informações científicas</p>
+
+    <!-- Área do canvas -->
+    <div class="canvas-container">
+      <canvas id="blackholeCanvas" width="800" height="600"></canvas>
+      <div class="controles">
+        <div class="slider-container">
+          <label for="massa-slider">Massa (M☉):</label>
+          <input type="range" id="massa-slider" min="1" max="1000" value="10" step="1">
+          <span id="massa-valor">10</span>
+        </div>
+        <div class="slider-container">
+          <label for="spin-slider">Spin (0-1):</label>
+          <input type="range" id="spin-slider" min="0" max="0.99" value="0.5" step="0.01">
+          <span id="spin-valor">0.50</span>
+        </div>
+        <button id="btn-animar">Pausar</button>
+        <button id="btn-reset">Resetar Posição</button>
+      </div>
+      <p class="hint">🖱️ Arraste o buraco negro para movê-lo</p>
+    </div>
+
+    <!-- Resultados dinâmicos -->
+    <div id="resultado">
+      Os cálculos aparecerão aqui.
+    </div>
+
+    <!-- Seções informativas (mantidas) -->
+    <section>
+      <h2>O que é um Buraco Negro?</h2>
+      <p>Um buraco negro é uma região do espaço-tempo onde a gravidade é tão intensa que nada, nem mesmo a luz, consegue escapar de sua atração. Essa "fronteira sem retorno" é chamada de <strong>horizonte de eventos</strong>.</p>
+    </section>
+
+    <section>
+      <h2>Principais Propriedades</h2>
+      <ul>
+        <li><strong>Massa (M):</strong> quantidade de matéria compactada.</li>
+        <li><strong>Raio de Schwarzschild (R<sub>s</sub>):</strong> raio do horizonte de eventos (aprox. 3 km por massa solar).</li>
+        <li><strong>Densidade média:</strong> depende da massa; buracos negros supermassivos podem ter densidade menor que a água.</li>
+        <li><strong>Temperatura Hawking:</strong> inversamente proporcional à massa.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Tipos de Buracos Negros</h2>
+      <table>
+        <thead>
+          <tr><th>Tipo</th><th>Massa Aproximada</th><th>Origem</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Estelar</td><td>3 a 20 M☉</td><td>Colapso de estrelas massivas</td></tr>
+          <tr><td>Intermediário</td><td>100 a 100.000 M☉</td><td>Fusão de buracos negros estelares</td></tr>
+          <tr><td>Supermassivo</td><td>Milhões a bilhões M☉</td><td>Centro de galáxias</td></tr>
+          <tr><td>Primordial (hipotético)</td><td>Microgramas a massas terrestres</td><td>Início do universo</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Curiosidades</h2>
+      <ul>
+        <li>O buraco negro mais próximo da Terra é Gaia BH1, a 1.560 anos-luz.</li>
+        <li>Primeira foto: M87* em 2019 pelo Event Horizon Telescope.</li>
+        <li>Efeito de lente gravitacional distorce a luz ao fundo.</li>
+        <li>Radiação Hawking faz buracos negros evaporarem em escalas de tempo cósmicas.</li>
+      </ul>
+    </section>
+
+    <footer>
+      Feito com curiosidade cósmica 🚀 | Visualização simplificada para fins educativos
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

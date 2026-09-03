@@ -229,3 +229,37 @@ footer {
 section p {
   text-align: justify;
 }
+
+/* Adicione ao CSS existente */
+
+.panel-bhs {
+  background: rgba(30, 30, 60, 0.8);
+  border: 1px solid #3366ff;
+  border-radius: 10px;
+  padding: 15px;
+  margin: 15px 0;
+}
+
+.panel-bhs h3 {
+  color: #ffcc00;
+  margin-bottom: 10px;
+}
+
+.botoes-bhs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.bh-btn {
+  background: linear-gradient(45deg, #1a1a40, #6633cc);
+  color: white;
+  font-size: 0.9rem;
+  padding: 8px 14px;
+  border: 1px solid #9966ff;
+}
+
+.bh-btn:hover {
+  box-shadow: 0 0 10px #9966ff;
+  transform: scale(1.05);
+}

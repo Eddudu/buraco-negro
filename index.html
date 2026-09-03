@@ -16,8 +16,8 @@
       <canvas id="blackholeCanvas" width="800" height="600"></canvas>
       <div class="controles">
         <div class="slider-container">
-          <label for="massa-slider">Massa (log M☉):</label>
-          <input type="range" id="massa-slider" min="0" max="6" value="1" step="0.01">
+          <label for="massa-slider">Massa (M☉):</label>
+          <input type="range" id="massa-slider" min="1" max="1000" value="10" step="1">
           <span id="massa-valor">10</span>
         </div>
         <div class="slider-container">
@@ -34,7 +34,7 @@
     <!-- Painel de comparação com astros -->
     <div class="panel-astros">
       <h3>🌍 Comparar com astros</h3>
-      <p>Clique para adicionar um astro à cena:</p>
+      <p>Clique para adicionar um astro à cena. Eles aparecerão ao redor do buraco negro.</p>
       <div class="botoes-astros">
         <button class="astro-btn" data-nome="Terra" data-raio="6371" data-cor="#4d7ab5">Terra</button>
         <button class="astro-btn" data-nome="Júpiter" data-raio="69911" data-cor="#c78b6e">Júpiter</button>
@@ -51,10 +51,81 @@
       Os cálculos aparecerão aqui.
     </div>
 
-    <!-- Seções informativas (mantidas) -->
+    <!-- ========== SEÇÕES INFORMATIVAS ========== -->
     <section>
       <h2>O que é um Buraco Negro?</h2>
-      <p>Um buraco negro é uma região do espaço-tempo onde a gravidade é tão intensa que nada, nem mesmo a luz, consegue escapar de sua atração. Essa "fronteira sem retorno" é chamada de <strong>horizonte de eventos</strong>.</p>
+      <p>
+        Um buraco negro é uma região do espaço-tempo onde a gravidade é tão intensa que nada, 
+        nem mesmo a luz, consegue escapar de sua atração. Essa "fronteira sem retorno" é chamada 
+        de <strong>horizonte de eventos</strong>. A matéria e a energia que cruzam esse limite 
+        desaparecem do nosso universo observável.
+      </p>
+    </section>
+
+    <section>
+      <h2>🌌 Horizonte de Eventos</h2>
+      <p>
+        O horizonte de eventos é a superfície imaginária que delimita a região de onde nada pode escapar. 
+        Para um buraco negro sem rotação (Schwarzschild), seu raio é dado por:
+      </p>
+      <div class="formula">
+        R<sub>s</sub> = 2GM / c²
+      </div>
+      <p>
+        Onde <em>G</em> é a constante gravitacional, <em>M</em> é a massa e <em>c</em> é a velocidade da luz. 
+        Aproximadamente, cada massa solar corresponde a 3 km de raio. Uma vez dentro desse limite, 
+        todas as trajetórias apontam para o centro – nem a luz pode voltar.
+      </p>
+    </section>
+
+    <section>
+      <h2>🌀 Singularidade</h2>
+      <p>
+        No centro do buraco negro, a teoria da relatividade geral prevê um ponto de densidade infinita 
+        e curvatura espaço-temporal infinita: a <strong>singularidade</strong>. 
+        As leis da física como conhecemos deixam de valer nesse ponto. Acredita-se que uma teoria 
+        quântica da gravidade seja necessária para descrevê-la.
+      </p>
+    </section>
+
+    <section>
+      <h2>⚡ Ergosfera (Buraco Negro em Rotação)</h2>
+      <p>
+        Buracos negros com rotação (métrica de Kerr) possuem uma região fora do horizonte chamada 
+        <strong>ergosfera</strong>, onde o espaço-tempo é arrastado pela rotação. 
+        Dentro da ergosfera, é impossível ficar parado; tudo é forçado a girar junto com o buraco negro. 
+        É nessa região que ocorre o processo Penrose, capaz de extrair energia da rotação do buraco negro.
+      </p>
+    </section>
+
+    <section>
+      <h2>🔥 Disco de Acreção</h2>
+      <p>
+        Muitos buracos negros são cercados por um disco de gás e poeira em rotação: o 
+        <strong>disco de acreção</strong>. O atrito entre as partículas aquece o material a milhões 
+        de graus, emitindo radiação intensa (raios-X). É essa radiação que nos permite detectar 
+        buracos negros, como no famoso sistema Cygnus X-1.
+      </p>
+    </section>
+
+    <section>
+      <h2>🔍 Lente Gravitacional</h2>
+      <p>
+        A gravidade extrema do buraco negro curva os raios de luz que passam próximos, distorcendo 
+        a imagem de estrelas e galáxias ao fundo – efeito de <strong>lente gravitacional</strong>. 
+        Na visualização acima, as estrelas próximas ao buraco negro são deslocadas e brilham mais, 
+        simulando esse fenômeno.
+      </p>
+    </section>
+
+    <section>
+      <h2>💨 Radiação Hawking</h2>
+      <p>
+        Devido a efeitos quânticos perto do horizonte, os buracos negros emitem uma radiação térmica 
+        muito fraca, chamada <strong>radiação Hawking</strong>. A temperatura é inversamente proporcional 
+        à massa; buracos negros pequenos (primordiais) seriam muito quentes e evaporariam rapidamente, 
+        enquanto os supermassivos são extremamente frios e duram mais que a idade do universo.
+      </p>
     </section>
 
     <section>

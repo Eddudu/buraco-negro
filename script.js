@@ -1,5 +1,6 @@
 // =============================================
 // Buraco Negro Interativo - script.js
+// Visual da 1ª versão (disco simples, horizonte básico)
 // =============================================
 
 const canvas = document.getElementById('blackholeCanvas');
@@ -166,12 +167,16 @@ function desenharCena() {
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+  // Desenha estrelas com lente gravitacional
   desenharEstrelasComLente();
+
   const raioBH = escalaVisual(massaSolar);
   const achatamento = 1 - 0.25 * spin;
 
-  desenharDiscoAcrecaoTraseira(raioBH, raioBH * achatamento);
+  // Desenha disco de acreção (versão simples: anéis elípticos)
+  desenharDiscoAcrecao(raioBH, raioBH * achatamento);
 
+  // Partículas orbitais (com trail)
   for (const p of particulasAcrecao) {
     if (p.trail.length > 1) {
       ctx.beginPath();
@@ -191,8 +196,41 @@ function desenharCena() {
     ctx.fill();
   }
 
-  desenharHorizonteEventos(raioBH, achatamento);
-  desenharDiscoAcrecaoFrontal(raioBH, raioBH * achatamento);
+  // Horizonte de eventos (versão original)
+  ctx.save();
+  ctx.translate(bhX, bhY);
+  ctx.scale(1, achatamento);
+  // Sombra interna
+  const gradSombra = ctx.createRadialGradient(0, 0, raioBH * 0.5, 0, 0, raioBH);
+  gradSombra.addColorStop(0, 'rgba(0,0,0,1)');
+  gradSombra.addColorStop(0.8, 'rgba(0,0,0,0.9)');
+  gradSombra.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.beginPath();
+  ctx.arc(0, 0, raioBH, 0, Math.PI * 2);
+  ctx.fillStyle = gradSombra;
+  ctx.fill();
+
+  // Anel de fótons (brilhante)
+  ctx.shadowColor = 'rgba(255, 180, 50, 0.9)';
+  ctx.shadowBlur = 25;
+  ctx.beginPath();
+  ctx.arc(0, 0, raioBH, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(255, 220, 150, 0.9)';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Brilho interno
+  const gradCentral = ctx.createRadialGradient(0, 0, raioBH * 0.2, 0, 0, raioBH * 1.2);
+  gradCentral.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
+  gradCentral.addColorStop(0.5, 'rgba(255, 200, 100, 0.1)');
+  gradCentral.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.beginPath();
+  ctx.arc(0, 0, raioBH * 1.2, 0, Math.PI * 2);
+  ctx.fillStyle = gradCentral;
+  ctx.fill();
+
+  ctx.restore();
 }
 
 function desenharEstrelasComLente() {
@@ -228,25 +266,22 @@ function desenharEstrelasComLente() {
   }
 }
 
-function desenharDiscoAcrecaoTraseira(raioHorizontal, raioVertical) {
+function desenharDiscoAcrecao(raioHorizontal, raioVertical) {
   const aneis = 5;
   for (let i = 0; i < aneis; i++) {
-    const raioAnel = raioHorizontal * (1.1 + i * 0.3);
+    const raioAnel = raioHorizontal * (1.2 + i * 0.3);
     const velRotacao = anguloDisco * (1 + (1 - i / aneis) * 1.5 + spin * 0.5);
     ctx.save();
     ctx.translate(bhX, bhY);
     ctx.rotate(velRotacao);
     ctx.beginPath();
     ctx.ellipse(0, 0, raioAnel, raioAnel * 0.35, 0, 0, Math.PI * 2);
-    ctx.clip();
-    ctx.beginPath();
-    ctx.ellipse(0, 0, raioAnel, raioAnel * 0.35, 0, 0, Math.PI);
     const grad = ctx.createLinearGradient(-raioAnel, 0, raioAnel, 0);
-    grad.addColorStop(0, 'rgba(255, 80, 0, 0.7)');
-    grad.addColorStop(0.3, 'rgba(255, 200, 50, 0.6)');
-    grad.addColorStop(0.5, 'rgba(255, 255, 200, 0.7)');
-    grad.addColorStop(0.7, 'rgba(255, 180, 30, 0.6)');
-    grad.addColorStop(1, 'rgba(255, 80, 0, 0.7)');
+    grad.addColorStop(0, 'rgba(255, 80, 0, 0.8)');
+    grad.addColorStop(0.3, 'rgba(255, 200, 50, 0.7)');
+    grad.addColorStop(0.5, 'rgba(255, 255, 200, 0.8)');
+    grad.addColorStop(0.7, 'rgba(255, 180, 30, 0.7)');
+    grad.addColorStop(1, 'rgba(255, 80, 0, 0.8)');
     ctx.strokeStyle = grad;
     ctx.lineWidth = 8 + i * 1.5;
     ctx.shadowColor = 'rgba(255, 150, 0, 0.5)';
@@ -254,75 +289,6 @@ function desenharDiscoAcrecaoTraseira(raioHorizontal, raioVertical) {
     ctx.stroke();
     ctx.restore();
   }
-}
-
-function desenharDiscoAcrecaoFrontal(raioHorizontal, raioVertical) {
-  const aneis = 5;
-  for (let i = 0; i < aneis; i++) {
-    const raioAnel = raioHorizontal * (1.1 + i * 0.3);
-    const velRotacao = anguloDisco * (1 + (1 - i / aneis) * 1.5 + spin * 0.5);
-    ctx.save();
-    ctx.translate(bhX, bhY);
-    ctx.rotate(velRotacao);
-    ctx.beginPath();
-    ctx.ellipse(0, 0, raioAnel, raioAnel * 0.35, 0, Math.PI, Math.PI * 2);
-    const grad = ctx.createLinearGradient(-raioAnel, 0, raioAnel, 0);
-    grad.addColorStop(0, 'rgba(255, 80, 0, 0.7)');
-    grad.addColorStop(0.3, 'rgba(255, 200, 50, 0.6)');
-    grad.addColorStop(0.5, 'rgba(255, 255, 200, 0.7)');
-    grad.addColorStop(0.7, 'rgba(255, 180, 30, 0.6)');
-    grad.addColorStop(1, 'rgba(255, 80, 0, 0.7)');
-    ctx.strokeStyle = grad;
-    ctx.lineWidth = 8 + i * 1.5;
-    ctx.shadowColor = 'rgba(255, 150, 0, 0.5)';
-    ctx.shadowBlur = 10;
-    ctx.stroke();
-    ctx.restore();
-  }
-}
-
-function desenharHorizonteEventos(raioBH, achatamento) {
-  ctx.save();
-  ctx.translate(bhX, bhY);
-  ctx.scale(1, achatamento);
-
-  const gradSombra = ctx.createRadialGradient(0, 0, raioBH * 0.2, 0, 0, raioBH);
-  gradSombra.addColorStop(0, 'rgba(0,0,0,1)');
-  gradSombra.addColorStop(0.7, 'rgba(0,0,0,0.95)');
-  gradSombra.addColorStop(1, 'rgba(0,0,0,0.8)');
-  ctx.beginPath();
-  ctx.arc(0, 0, raioBH, 0, Math.PI * 2);
-  ctx.fillStyle = gradSombra;
-  ctx.fill();
-
-  const gradAnel = ctx.createRadialGradient(-raioBH * 0.2, -raioBH * 0.2, raioBH * 0.5, 0, 0, raioBH);
-  gradAnel.addColorStop(0, 'rgba(255, 180, 50, 0.0)');
-  gradAnel.addColorStop(0.5, 'rgba(255, 220, 150, 0.6)');
-  gradAnel.addColorStop(0.8, 'rgba(255, 200, 80, 0.9)');
-  gradAnel.addColorStop(1, 'rgba(255, 150, 0, 0.0)');
-  ctx.beginPath();
-  ctx.arc(0, 0, raioBH, 0, Math.PI * 2);
-  ctx.fillStyle = gradAnel;
-  ctx.fill();
-
-  ctx.shadowColor = 'rgba(255, 200, 100, 0.9)';
-  ctx.shadowBlur = 15;
-  ctx.beginPath();
-  ctx.arc(0, 0, raioBH, 0, Math.PI * 2);
-  ctx.strokeStyle = 'rgba(255, 220, 150, 0.7)';
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
-  ctx.shadowBlur = 0;
-
-  const gradCentral = ctx.createRadialGradient(0, 0, raioBH * 0.1, 0, 0, raioBH * 0.9);
-  gradCentral.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
-  gradCentral.addColorStop(1, 'rgba(0,0,0,0)');
-  ctx.beginPath();
-  ctx.arc(0, 0, raioBH, 0, Math.PI * 2);
-  ctx.fillStyle = gradCentral;
-  ctx.fill();
-
-  ctx.restore();
 }
 
 function obterPosicaoMouse(e) {
